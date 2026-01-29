@@ -1,0 +1,54 @@
+{
+  "api": {
+    "name": "BLAZIX S4 Live Prediction API",
+    "version": "2.0",
+    "description": "Real-time lottery predictions with custom calculation logic",
+    "base_url": "https://rankingmork-del.github.io/Data/",
+    "live_data_source": "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json",
+    "features": [
+      "Real-time data fetching",
+      "Custom calculation logic",
+      "JSON API responses",
+      "CORS enabled",
+      "No authentication required"
+    ]
+  },
+  "endpoints": {
+    "live": {
+      "/api/current.json": "Current prediction with live data",
+      "/api/all.json": "Complete live data including history",
+      "/api/previous.json": "Previous lottery results",
+      "/api/calculate.json?numbers=1,2,3,...": "Calculate with custom numbers"
+    },
+    "static": {
+      "/api/info.json": "API information",
+      "/api/formula.json": "Calculation formula"
+    }
+  },
+  "calculation": {
+    "formula": "(numbers[0] + numbers[4]) - numbers[9] = result",
+    "rules": [
+      "Take last 10 numbers (most recent first)",
+      "Add 1st and 5th numbers",
+      "If sum is 2 digits, reduce (14 → 1+4=5)",
+      "Subtract 10th number",
+      "If negative, make positive",
+      "If result is 2 digits, reduce again",
+      "BIG if result ≥5, SMALL if <5"
+    ],
+    "example": {
+      "numbers": [5, 8, 4, 5, 4, 6, 4, 8, 5, 2],
+      "calculation": "5 + 4 = 9 → 9 - 2 = 7",
+      "result": 7,
+      "prediction": "BIG"
+    }
+  },
+  "rate_limits": {
+    "requests_per_minute": 60,
+    "caching": "No cache, fresh data every request"
+  },
+  "contact": {
+    "repository": "https://github.com/rankingmork-del/Data",
+    "issues": "https://github.com/rankingmork-del/Data/issues"
+  }
+}
