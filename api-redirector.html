@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>API Redirector</title>
+    <script>
+        // This page redirects API requests to our service
+        const urlParams = new URLSearchParams(window.location.search);
+        const endpoint = urlParams.get('endpoint') || 'current';
+        const numbers = urlParams.get('numbers');
+        
+        // Load and execute the API service
+        async function loadAPI() {
+            try {
+                // Import the API service
+                const script = document.createElement('script');
+                script.src = 'api-service.js';
+                document.head.appendChild(script);
+                
+                // Wait for API to load
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                let result;
+                
+                switch(endpoint) {
+                    case 'current':
+                        result = await window.BlazixAPI.getCurrentPrediction();
+                        break;
+                    case 'all':
+                        result = await window.BlazixAPI.getAllData();
+                        break;
+                    case 'previous':
+                        result = await window.BlazixAPI.getPreviousResults();
+                        break;
+                    case 'calculate':
+                        if (numbers) {
+                            const numArray = numbers.split(',').map(n => parseInt(n.trim()));
+                            result = window.BlazixAPI.calculateCustom(numArray);
+                        }
+                        break;
+                    default:
+                        result = { error: 'Unknown endpoint' };
+                }
+                
+                // Serve as JSON
+                document.write(JSON.stringify(result, null, 2));
+                
+            } catch (error) {
+                document.write(JSON.stringify({
+                    error: error.message,
+                    timestamp: new Date().toISOString()
+                }, null, 2));
+            }
+        }
+        
+        window.onload = loadAPI;
+    </script>
+</head>
+<body>
+    <p>Loading live API data...</p>
+</body>
+</html>
