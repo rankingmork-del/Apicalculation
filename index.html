@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLAZIX S4 Live API - Real-time Data</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #0a0a0f; color: white; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; padding: 2rem 0; }
+        h1 { color: #8b3bff; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .live-badge { background: #ff3b5c; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; }
+        .endpoint { background: #151522; padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #8b3bff; }
+        .endpoint h3 { color: #00ff88; margin-bottom: 10px; }
+        .method { background: #8b3bff; color: white; padding: 3px 10px; border-radius: 3px; font-size: 12px; }
+        .url { background: #1a1a2a; padding: 10px; border-radius: 5px; margin: 10px 0; font-family: monospace; color: #00ff88; }
+        button { background: #8b3bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        pre { background: #1a1a2a; padding: 15px; border-radius: 5px; overflow: auto; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BLAZIX S4 LIVE API</h1>
+            <p class="live-badge">REAL-TIME DATA FROM LOTTERY API</p>
+            <p>This API fetches live data every time you request it</p>
+        </header>
+
+        <div class="endpoint">
+            <h3><span class="method">GET</span> Current Prediction</h3>
+            <div class="url">https://rankingmork-del.github.io/Data/api/current.json</div>
+            <p>Returns live prediction with current lottery data</p>
+            <button onclick="fetchAPI('current')">Test Live Endpoint</button>
+        </div>
+
+        <div class="endpoint">
+            <h3><span class="method">GET</span> All Data</h3>
+            <div class="url">https://rankingmork-del.github.io/Data/api/all.json</div>
+            <p>Returns complete live data including previous results</p>
+            <button onclick="fetchAPI('all')">Test Live Endpoint</button>
+        </div>
+
+        <div class="endpoint">
+            <h3><span class="method">GET</span> Previous Results</h3>
+            <div class="url">https://rankingmork-del.github.io/Data/api/previous.json</div>
+            <p>Returns last 8 actual lottery results</p>
+            <button onclick="fetchAPI('previous')">Test Live Endpoint</button>
+        </div>
+
+        <div class="endpoint">
+            <h3><span class="method">GET</span> Calculate</h3>
+            <div class="url">https://rankingmork-del.github.io/Data/api/calculate.json?numbers=5,8,4,5,4,6,4,8,5,2</div>
+            <p>Calculate prediction with custom numbers</p>
+            <button onclick="testCalculation()">Test Calculation</button>
+        </div>
+
+        <div class="result">
+            <h3>API Response:</h3>
+            <pre id="apiResult">Click an endpoint above to see live data</pre>
+            <p id="status">Status: Ready</p>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAPI(endpoint) {
+            document.getElementById('status').textContent = 'Status: Fetching live data...';
+            
+            try {
+                // Use our JavaScript API service
+                const response = await fetch(`api-service.js?endpoint=${endpoint}&t=${Date.now()}`);
+                const data = await response.json();
+                
+                document.getElementById('apiResult').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('status').textContent = `Status: Success (Live data fetched at ${new Date().toLocaleTimeString()})`;
+            } catch (error) {
+                document.getElementById('apiResult').textContent = `Error: ${error.message}`;
+                document.getElementById('status').textContent = 'Status: Error';
+            }
+        }
+
+        async function testCalculation() {
+            const numbers = [5, 8, 4, 5, 4, 6, 4, 8, 5, 2];
+            document.getElementById('status').textContent = 'Status: Calculating...';
+            
+            try {
+                const response = await fetch(`api-service.js?endpoint=calculate&numbers=${numbers.join(',')}`);
+                const data = await response.json();
+                
+                document.getElementById('apiResult').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('status').textContent = `Status: Calculation complete`;
+            } catch (error) {
+                document.getElementById('apiResult').textContent = `Error: ${error.message}`;
+                document.getElementById('status').textContent = 'Status: Error';
+            }
+        }
+    </script>
+</body>
+</html>
