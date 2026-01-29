@@ -1,0 +1,22 @@
+# Enable CORS
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type"
+
+# Redirect API requests
+RewriteEngine On
+
+# Serve current.json from our service
+RewriteRule ^api/current\.json$ api-redirector.html?endpoint=current [L,QSA]
+
+# Serve all.json from our service
+RewriteRule ^api/all\.json$ api-redirector.html?endpoint=all [L,QSA]
+
+# Serve previous.json from our service
+RewriteRule ^api/previous\.json$ api-redirector.html?endpoint=previous [L,QSA]
+
+# Serve calculate.json
+RewriteRule ^api/calculate\.json$ api-redirector.html?endpoint=calculate [L,QSA]
+
+# Serve static info
+RewriteRule ^api/info\.json$ api-config.json [L]
